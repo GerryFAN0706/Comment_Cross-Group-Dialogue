@@ -183,12 +183,15 @@ def run():
     if not effect_pairs.empty:
         metrics = [
             "d_R",
+            "d_R_with_op",
             "d_BF",
             "d_Gini",
             "d_DCBI_gender",
             "d_DCBI_province",
             "d_prosocial_any",
             "d_prosocial_score",
+            "d_Cross_gender_share",
+            "d_Cross_province_share",
         ]
         for metric in metrics:
             if metric not in outcomes.columns:
@@ -196,17 +199,24 @@ def run():
             treated_vals = outcomes.loc[effect_pairs["mblogid_t"], metric]
             control_vals = outcomes.loc[effect_pairs["mblogid_c"], metric]
             df_metric = pd.DataFrame({"treated": treated_vals.values, "control": control_vals.values}).dropna()
+            treated_mean = df_metric["treated"].mean() if not df_metric.empty else np.nan
+            control_mean = df_metric["control"].mean() if not df_metric.empty else np.nan
             if df_metric.empty:
-                continue
-            diff = df_metric["treated"] - df_metric["control"]
-            se = diff.std(ddof=1) / np.sqrt(len(diff)) if len(diff) > 1 else np.nan
+                diff_mean = np.nan
+                se = np.nan
+                n_pairs = 0
+            else:
+                diff = df_metric["treated"] - df_metric["control"]
+                diff_mean = diff.mean()
+                se = diff.std(ddof=1) / np.sqrt(len(diff)) if len(diff) > 1 else np.nan
+                n_pairs = len(diff)
             effect_rows.append({
                 "metric": metric,
-                "treated_mean": df_metric["treated"].mean(),
-                "control_mean": df_metric["control"].mean(),
-                "diff_mean": diff.mean(),
+                "treated_mean": treated_mean,
+                "control_mean": control_mean,
+                "diff_mean": diff_mean,
                 "diff_se": se,
-                "n_pairs": len(diff)
+                "n_pairs": n_pairs
             })
     matched_effects = pd.DataFrame(effect_rows)
     save_parquet(matched_effects, f"{ART}/matched_effects.parquet")

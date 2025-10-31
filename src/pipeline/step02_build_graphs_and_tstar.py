@@ -40,9 +40,15 @@ def run():
             continue
         # compute edges
         T["u"] = T["comment_user"].apply(lambda u: u.get("_id") if isinstance(u, dict) else None)
-        T["v"] = T["reply_comment"].apply(lambda x: x.get("user", {}).get("_id") if isinstance(x, dict) else op_id)
+        T["reply_user_id"] = T["reply_comment"].apply(
+            lambda rc: rc.get("user", {}).get("_id") if isinstance(rc, dict) and isinstance(rc.get("user"), dict) else None
+        )
+        is_root = T["reply_user_id"].isna()
+        if op_id is not None:
+            T.loc[is_root, "reply_user_id"] = op_id
+        T["v"] = T["reply_user_id"]
         T["is_agent"] = T["comment_user"].apply(lambda u: _is_agent(u, cfg))
-        T["is_root_reply"] = T["reply_comment"].isna()
+        T["is_root_reply"] = is_root
         # t*
         tstar = pd.NaT
         agent_rows = T[T["is_agent"]]
