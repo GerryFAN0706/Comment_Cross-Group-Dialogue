@@ -111,12 +111,13 @@ def run():
         if len(dsub) < 30 or dsub["treated"].nunique() < 2:
             continue
         model = smf.ols(f"{col} ~ treated + C(hour):C(dow)", data=dsub).fit(cov_type="HC1")
+        treated_param = next((name for name in model.params.index if name.startswith("treated")), None)
         results.append(
             {
                 "outcome": col,
-                "coef_treated": model.params.get("treated", float("nan")),
-                "se": model.bse.get("treated", float("nan")),
-                "p": model.pvalues.get("treated", float("nan")),
+                "coef_treated": model.params.get(treated_param, float("nan")) if treated_param else float("nan"),
+                "se": model.bse.get(treated_param, float("nan")) if treated_param else float("nan"),
+                "p": model.pvalues.get(treated_param, float("nan")) if treated_param else float("nan"),
                 "n": len(dsub),
             }
         )

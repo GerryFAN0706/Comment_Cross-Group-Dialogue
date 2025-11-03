@@ -1,8 +1,8 @@
 # CommentR Conversation Bridging Study — Research Kit
 
-This kit provides an **end-to-end, reproducible** pipeline to evaluate whether a single AI agent reply (@CommentR) turns one-to-many posts into many-to-many, pro-social conversations on Weibo.
+This code provides an **end-to-end, reproducible** pipeline to evaluate whether a single AI agent reply (@CommentR) turns one-to-many posts into many-to-many, pro-social conversations on Weibo.
 
-## What you get
+## Code includes:
 - **Step-by-step pipeline** scripts in `src/pipeline/` — run them sequentially.
 - **Core metrics** (Reciprocity, Branching, Gini, Assortativity, DC-BI, Prosocial tone).
 - **Causal identification** modules: Propensity matching, Event study, 2SRI instrument.
@@ -16,9 +16,9 @@ This kit provides an **end-to-end, reproducible** pipeline to evaluate whether a
    pip install -r requirements.txt
    ```
 2. Place your JSON inputs in `data/`:
-   - `users.json` (list or JSONL)
-   - `posts.json`
-   - `comments.json`
+   - `userspro.json` (list or JSONL)
+   - `postspro.json`
+   - `commentspro.json`
 3. Edit `config.yaml` — set the agent account numeric ID(s) if you have them.
 4. Run the pipeline:
    ```bash

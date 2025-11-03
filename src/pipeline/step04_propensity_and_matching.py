@@ -79,15 +79,30 @@ def run():
 
     # Matching: nearest neighbors on logit with caliper; exact on hour band and topic band
     # For simplicity here, we will do coarse exact matches on hour_of_day band and SVD topic band
+    topic_scores = np.zeros((len(model_input), svd.n_components))
     try:
-        topic_scores = svd.transform(tfidf.transform(model_input["content"]))[:,0]
-    except Exception:
-        topic_scores = np.zeros(len(model_input))
-    model_input["topic_component"] = topic_scores
-    unique_topics = pd.Series(model_input["topic_component"]).nunique(dropna=False)
+        tfidf_svd_fitted = model.named_steps["pre"].named_transformers_.get("tfidf_svd")
+        if tfidf_svd_fitted is not None:
+            transformed = tfidf_svd_fitted.transform(model_input["content"].values)
+            if hasattr(transformed, "toarray"):
+                transformed = transformed.toarray()
+            topic_scores = np.asarray(transformed)
+    except Exception as exc:
+        print(f"Warning: topic embedding transform failed ({exc}); falling back to zeros.")
+        topic_scores = np.zeros((len(model_input), svd.n_components))
+
+    model_input["topic_component"] = topic_scores[:, 0] if topic_scores.shape[1] > 0 else 0.0
+    if topic_scores.shape[1] > 1:
+        model_input["topic_component_2"] = topic_scores[:, 1]
+    else:
+        model_input["topic_component_2"] = 0.0
+
+    topic_vector = model_input[["topic_component", "topic_component_2"]].to_numpy()
+    vector_magnitude = np.linalg.norm(topic_vector, axis=1)
+    unique_topics = pd.Series(vector_magnitude).nunique(dropna=False)
     if unique_topics > 1:
         q = min(10, unique_topics)
-        model_input["topic_band"] = pd.qcut(model_input["topic_component"], q=q, labels=False, duplicates="drop")
+        model_input["topic_band"] = pd.qcut(vector_magnitude, q=q, labels=False, duplicates="drop")
     else:
         model_input["topic_band"] = 0
     model_input["hour_of_day_band"] = pd.cut(model_input["hour_of_day"], bins=[-1,5,11,17,23], labels=["night","morning","afternoon","evening"])

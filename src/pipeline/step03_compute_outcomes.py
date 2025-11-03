@@ -26,6 +26,10 @@ def run():
     # Pre/post windows per thread
     time_win = cfg["time_window_minutes"]
     tstars_map = dict(zip(tstars.mblogid, tstars.tstar))
+    first_comment_map = edges.groupby("root_post_mblogid")["created_at"].min()
+    last_comment_map = edges.groupby("root_post_mblogid")["created_at"].max()
+    offset_series = (tstars.set_index("mblogid")["tstar"] - first_comment_map).dropna()
+    median_offset = pd.Timedelta(seconds=float(offset_series.dt.total_seconds().median())) if not offset_series.empty else pd.Timedelta(minutes=time_win // 2)
     fallback_include_op = cfg.get("fallback_include_op_in_reciprocity", False)
     compute_cross_share = cfg.get("compute_cross_group_share", False)
 
@@ -50,23 +54,54 @@ def run():
     for mblogid, T_edges in edges.groupby("root_post_mblogid"):
         tstar = tstars_map.get(mblogid, pd.NaT)
         op_id = meta.loc[meta.mblogid==mblogid, "op_id"].iloc[0] if (meta.mblogid==mblogid).any() else None
-        T_comments = comments[comments["root_post_mblogid"]==mblogid].copy().sort_values("created_at")
+        T_edges = T_edges.sort_values("created_at").reset_index(drop=True)
+        T_edges["order_idx"] = np.arange(len(T_edges))
+        T_comments = comments[comments["root_post_mblogid"]==mblogid].copy().sort_values("created_at").reset_index(drop=True)
+
+        first_comment = first_comment_map.get(mblogid, pd.NaT)
+        last_comment = last_comment_map.get(mblogid, pd.NaT)
 
         anchor_time = tstar
         anchor_source = "tstar"
+        anchor_index = None
         if pd.isna(anchor_time):
+            anchor_source = "synthetic_offset"
+            if pd.isna(first_comment):
+                anchor_time = pd.NaT
+            else:
+                candidate = first_comment + median_offset
+                if not pd.isna(last_comment):
+                    if candidate > last_comment:
+                        candidate = last_comment
+                anchor_time = candidate
+
+        if pd.isna(anchor_time) and not T_edges.empty:
             anchor_source = "synthetic_median"
-            ordered = T_edges["created_at"].sort_values()
-            if not ordered.empty:
-                anchor_time = ordered.iloc[(len(ordered) - 1) // 2]
+            anchor_time = T_edges["created_at"].iloc[min(len(T_edges) // 2, len(T_edges) - 1)]
 
         if not pd.isna(anchor_time):
             window = pd.Timedelta(minutes=time_win)
             pre_mask = (T_edges["created_at"] < anchor_time) & (T_edges["created_at"] >= anchor_time - window)
             post_mask = (T_edges["created_at"] >= anchor_time) & (T_edges["created_at"] <= anchor_time + window)
+            anchor_index_candidates = T_edges.index[T_edges["created_at"] >= anchor_time].tolist()
+            anchor_index = anchor_index_candidates[0] if anchor_index_candidates else len(T_edges)
         else:
             pre_mask = pd.Series(False, index=T_edges.index)
             post_mask = pd.Series(False, index=T_edges.index)
+            anchor_index = None
+
+        if (pre_mask.sum() == 0 or post_mask.sum() == 0) and not T_edges.empty:
+            if anchor_index is None:
+                anchor_index = len(T_edges) // 2
+            pre_mask = T_edges["order_idx"] < anchor_index
+            post_mask = T_edges["order_idx"] >= anchor_index
+
+        if (pre_mask.sum() == 0 or post_mask.sum() == 0) and not T_edges.empty and pd.isna(tstar):
+            anchor_source = "synthetic_split"
+            anchor_index = max(1, len(T_edges) // 2)
+            pre_mask = T_edges["order_idx"] < anchor_index
+            post_mask = T_edges["order_idx"] >= anchor_index
+            anchor_time = T_edges["created_at"].iloc[min(anchor_index, len(T_edges) - 1)]
 
         def metrics_for(df_edges, exclude_op):
             if df_edges.empty:
@@ -134,6 +169,7 @@ def run():
             "tstar": tstar,
             "anchor_time": anchor_time,
             "anchor_source": anchor_source,
+            "anchor_index": anchor_index if anchor_index is not None else -1,
             **{f"all_{k}":v for k,v in all_m.items()},
             **{f"pre_{k}":v for k,v in pre_m.items()},
             **{f"post_{k}":v for k,v in post_m.items()},
