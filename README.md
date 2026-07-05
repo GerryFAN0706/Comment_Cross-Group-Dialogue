@@ -1,11 +1,11 @@
 # CommentR Research Kit
 
-> **From Solo Post to Shared Space: How Public LLM Replies Reshape Early-Stage Conversation Graphs on Weibo**
+> **From Solo Post to Shared Space: How a Public LLM Agent Reshapes Human-to-Human Conversation Structure on a Social Platform**
 >
 >
-> *KDD 2026*
+> *ACM Transactions on Social Computing (TSC), 2026*
 
-This repository provides an **end-to-end, reproducible** research pipeline for the paper above. It evaluates whether a single public LLM agent reply (`@CommentR`) turns one-to-many posts into many-to-many, pro-social conversations on Weibo.
+This repository provides an **end-to-end, reproducible** research pipeline for the paper above. It evaluates how a single public LLM agent reply (`@CommentR`) reshapes the structure of subsequent human-to-human conversation on Weibo. The additional analyses prepared for the journal revision live in [`revision/`](revision/) (powered mature-thread rewiring, content/topic moderation, and robustness checks).
 
 ---
 
@@ -82,6 +82,15 @@ commentr_research_kit/
 │
 ├── tests/
 │   └── test_metrics.py          # Unit tests for core metrics
+│
+├── revision/                    # Additional analyses for the TSC journal revision
+│   ├── revlib.py                #   Shared DR/AIPW estimator (validated vs. artifacts)
+│   ├── a1_sampleB_expanded.py   #   Powered mature-thread rewiring (E_min=1)
+│   ├── a_style.py / a_topic.py  #   Content-moderation & topic heterogeneity
+│   ├── a_bridging.py            #   DC-BI definability & user-attribute bridging
+│   ├── a_confounders.py         #   Named-confounder robustness
+│   ├── a_edge_cutoffs.py        #   First-k human-edge sensitivity
+│   └── a7_event_study.py        #   Powered edge-index event study
 │
 └── artifacts/                   # Generated outputs (created by the pipeline)
     ├── ingested/                #   Normalized Parquet files
@@ -289,13 +298,13 @@ pytest tests/
 If you use this code or dataset in your research, please cite:
 
 ```bibtex
-@inproceedings{liu2026solopost,
-  title     = {From Solo Post to Shared Space: How Public LLM Replies Reshape Early-Stage Conversation Graphs on Weibo},
+@article{liu2026solopost,
+  title     = {From Solo Post to Shared Space: How a Public LLM Agent Reshapes Human-to-Human Conversation Structure on a Social Platform},
   author    = {Liu, Dandan and Pan, Lihu and Md Sabri, Aznul Qalid and Fan, Guangrui},
-  booktitle = {Proceedings of the 32nd ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD '26)},
+  journal   = {ACM Transactions on Social Computing},
   year      = {2026},
-  address   = {Toronto, ON, Canada},
-  publisher = {ACM}
+  publisher = {ACM},
+  note      = {Under revision}
 }
 ```
 
