@@ -53,6 +53,20 @@ odds-augmented AIPW is reported as a sensitivity check.
 | `a_edge_cutoffs.py` | Sensitivity of the formation reciprocity effect to the first-*k* human edges (*k* = 3/5/10). |
 | `a7_event_study.py` | Powered edge-index event study (parallel-trends check) for the mature sample. |
 
+## Round-2 (R2) revision analyses
+
+Reproducibility scripts added for the second (R2) revision. Each consumes the
+same `artifacts/` directory and writes small aggregate outputs under `results/r2_*`.
+
+| Script | What it does |
+|---|---|
+| `r2_pair_reconciliation.py` | Sample-construction accounting (matching-stage pairs to estimation pairs) and post-match balance on the estimation population. |
+| `r2_balance_full.py` | Verbatim matching-feature-set balance and poster-prominence balance on the strict matched population. |
+| `r2_sampleB_selection.py` | Sample B eligibility ATT (extensive margin), unconditional estimand, and Lee (2009) trimming bounds. |
+| `r2_robustness.py` | Weight-renormalization, drop-covariate, and alternative boundary-convention checks. |
+| `r2_recip_robust.py` | Non-binding-subsample check for the formation reciprocity effect. |
+| `r2_verify_drop_and_censoring.py` | Verifies the zero-comment control exclusion and the per-arm early-engagement censoring. |
+
 ## Reproducing
 
 ```bash
