@@ -72,7 +72,7 @@ same `artifacts/` directory and writes small aggregate outputs under `results/r2
 ```bash
 cd revision
 python validate.py               # sanity: reproduces the published main effects
-python a1_sampleB_expanded.py    # headline: powered Sample B rewiring
+python a1_sampleB_expanded.py    # Sample B rewiring (bounded; see Headline findings)
 python a_style.py                # content moderation
 python a_topic.py                # topic heterogeneity
 python a_bridging.py             # bridging + definability
@@ -85,11 +85,16 @@ Outputs are written under `results/` (aggregate tables, CSVs, and figures).
 
 ## Headline findings
 
-- **Mature-thread rewiring is adequately powered** once the incumbent maturity
-  bar is relaxed to `E_min=1` (~2,253 treated threads): geographic homophily
-  reduction replicates as a genuine rewiring effect (−0.040, p<0.001, robust
-  across estimators); the reciprocity change is directionally consistent and
-  significant under the primary matched-DR estimator but estimator-sensitive.
+- **Mature-thread rewiring is bounded, not point-identified.** Relaxing the
+  incumbent maturity bar to `E_min=1` (~2,253 treated threads) yields conditional
+  rewiring estimates that echo formation (geographic homophily −0.040, p<0.001).
+  But eligibility for this sample is itself treatment-affected: the agent makes
+  sustained incumbent exchange 12.6 pp less likely (extensive-margin ATT −0.126,
+  p<1e-40). Once this differential selection is corrected, Lee (2009) trimming
+  bounds include zero for all three rewiring outcomes and the homophily estimate
+  reverses sign under a pre-only eligibility rule, so Sample B is reported as
+  bounded and the securely identified structural evidence is located at
+  formation (Sample A). See `r2_sampleB_selection.py`.
 - **The formation effect depends on reply content**: numeric/factual replies
   suppress reciprocity more strongly; longer replies dampen the branching
   increase — consistent with an information-satiation mechanism.

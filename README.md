@@ -5,7 +5,7 @@
 >
 > *ACM Transactions on Social Computing (TSC), 2026*
 
-This repository provides an **end-to-end, reproducible** research pipeline for the paper above. It evaluates how a single public LLM agent reply (`@CommentR`) reshapes the structure of subsequent human-to-human conversation on Weibo. The additional analyses prepared for the journal revision live in [`revision/`](revision/) (powered mature-thread rewiring, content/topic moderation, and robustness checks).
+This repository provides an **end-to-end, reproducible** research pipeline for the paper above. It evaluates how a single public LLM agent reply (`@CommentR`) reshapes the structure of subsequent human-to-human conversation on Weibo. The additional analyses prepared for the journal revision live in [`revision/`](revision/) (mature-thread rewiring under treatment-affected eligibility, content/topic moderation, and robustness checks).
 
 ---
 
@@ -34,7 +34,7 @@ Public-facing LLM agents are increasingly embedded in social platforms. This stu
 2. Estimate causal effects with a **cross-fitted doubly robust (AIPW)** estimator.
 3. Distinguish between **early-stage formation** (Sample A, post-only structure) and **mature-thread rewiring** (Sample B, incumbent-only pre/post deltas).
 
-Key findings: agent replies reduce reciprocity, increase branching, and reduce geographic homophily in early-stage threads — consistent with a shift from dialogue toward broadcast-style commenting around a focal reply.
+Key findings: in early-stage **formation**, agent replies reduce reciprocity, increase branching, and reduce geographic homophily, with no significant change in degree-corrected bridging (DC-BI) — a hub-and-spoke shift from dialogic exchange toward one-off commenting around a focal reply. In **mature** threads, eligibility for the incumbent-rewiring analysis is itself reduced by the agent, so those rewiring effects are reported as **bounded rather than point-identified**, and the securely identified structural evidence is at formation. The magnitude of the reshaping depends on *how* the agent answers — more comprehensive, factual replies produce a larger focal shift.
 
 ---
 
