@@ -5,7 +5,7 @@
 >
 > *ACM Transactions on Social Computing (TSC), 2026*
 
-This repository provides the research pipeline for the paper above. Configuration status and current reproducibility limitations are documented in [CONFIG_NOTES.txt](CONFIG_NOTES.txt). It evaluates how a single public LLM agent reply (`@CommentR`) reshapes the structure of subsequent human-to-human conversation on Weibo. The additional analyses prepared for the journal revision live in [`revision/`](revision/) (mature-thread rewiring under treatment-affected eligibility, content/topic moderation, and robustness checks).
+This repository provides the research pipeline for the paper above. It evaluates how a single public LLM agent reply (`@CommentR`) reshapes the structure of subsequent human-to-human conversation on Weibo. The additional analyses prepared for the journal revision live in [`revision/`](revision/) (mature-thread rewiring under treatment-affected eligibility, content/topic moderation, and robustness checks).
 
 ---
 
@@ -154,7 +154,7 @@ ln -s /path/to/Comments.json data/comments.json
 
 ## Configuration
 
-The main pipeline reads [`config.yaml`](config.yaml) from the repository root. The file is a **reconstructed template**, with provisional text-model settings and unavailable language lexicons. Read [CONFIG_NOTES.txt](CONFIG_NOTES.txt) before running it. The scripts in `revision/` generally use existing artifacts rather than this YAML file. Key sections:
+The main pipeline reads [`config.yaml`](config.yaml) from the repository root. The supplied file is a configuration template with provisional text-model settings and empty language lexicons. The scripts in `revision/` generally use existing artifacts rather than this YAML file. Key sections:
 
 | Section | Description |
 |---------|-------------|
@@ -166,7 +166,7 @@ The main pipeline reads [`config.yaml`](config.yaml) from the repository root. T
 | `min_pre_human_edges` / `min_post_human_edges` | Sample A/B split thresholds |
 | `control_anchor_strategy` | Pseudo-anchor assignment for controls (`matched_median_latency`) |
 
-Record any parameter changes. Exact reproduction of every paper result from raw data has not been verified with this template.
+Record any parameter changes.
 
 ---
 

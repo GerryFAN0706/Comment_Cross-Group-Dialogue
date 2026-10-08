@@ -26,7 +26,7 @@ A separate implementation of the cross-fitted matched DR/AIPW estimators used
 for the journal-revision analyses. Its outcome model, normalization, and sample
 filters differ from the original `src/pipeline/step05_event_study_and_did.py`,
 so it should not be treated as an exact reproduction of every original main
-table. See [configuration and reproducibility notes](../CONFIG_NOTES.txt).
+table.
 It exposes two estimators:
 
 | Function | Estimator | Used as |
