@@ -22,11 +22,12 @@ All scripts import the shared estimator from `revlib.py`, which reads
 
 ## Shared estimator — `revlib.py`
 
-A self-contained re-implementation of the paper's cross-fitted matched doubly
-robust (DR/AIPW) ATT estimator, validated to reproduce
-`artifacts/main_effects/att_post_main.parquet` (Sample A formation reciprocity
-ATT −0.185 vs. −0.187; SE 0.041 vs. 0.040; treated/control counts exact). It
-exposes two estimators:
+A separate implementation of the cross-fitted matched DR/AIPW estimators used
+for the journal-revision analyses. Its outcome model, normalization, and sample
+filters differ from the original `src/pipeline/step05_event_study_and_did.py`,
+so it should not be treated as an exact reproduction of every original main
+table. See [configuration and reproducibility notes](../CONFIG_NOTES.txt).
+It exposes two estimators:
 
 | Function | Estimator | Used as |
 |---|---|---|
@@ -43,7 +44,6 @@ odds-augmented AIPW is reported as a sensitivity check.
 
 | Script | What it does |
 |---|---|
-| `validate.py` | Reproduces the published Sample A and strict Sample B tables to validate `revlib`. |
 | `a1_sampleB_expanded.py` | Mature-thread **rewiring** on the powered sample (`E_min=1`, ~2,253 treated) with the three-estimator comparison and the eligibility-ceiling probe. |
 | `a_style.py` | **Content moderation**: matched formation ATT within strata of the agent reply's style (length, numeric/factual, question, …). |
 | `a_topic.py` | **Topic heterogeneity** of the formation effect (exploratory keyword classifier). |
@@ -71,7 +71,6 @@ same `artifacts/` directory and writes small aggregate outputs under `results/r2
 
 ```bash
 cd revision
-python validate.py               # sanity: reproduces the published main effects
 python a1_sampleB_expanded.py    # Sample B rewiring (bounded; see Headline findings)
 python a_style.py                # content moderation
 python a_topic.py                # topic heterogeneity

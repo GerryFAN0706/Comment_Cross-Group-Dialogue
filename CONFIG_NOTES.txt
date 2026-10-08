@@ -1,0 +1,39 @@
+Configuration notes
+
+config.yaml is a reconstructed template for the main pipeline. The original
+run configuration was not recovered. Exact reproduction of all paper results
+from raw data has not been verified with this file.
+
+Run the main pipeline from the repository root. It expects data/users.json,
+data/posts.json, and data/comments.json. Input paths are fixed in the source.
+Run step04 before step03, as shown in README.md, to construct matched anchors.
+The agent ID and nickname refer to the anonymized corpus used for the saved
+analyses; verify them if using a different dataset release.
+
+Unresolved settings
+- tfidf_max_features=5000 and svd_components=50 are provisional values.
+- Several optional settings use source defaults rather than recovered run metadata.
+- Original prosocial, empathy, politeness, and hedging lexicons are unavailable.
+  Their lists are empty and the tone classifier is disabled. These settings
+  produce zero-valued tone/lexicon indicators, which must not be interpreted as
+  reproductions of the paper's language analyses.
+
+Verification scope
+The original step05 estimator was checked against existing local outcomes,
+matching weights, propensity scores, and covariates. Sample A ATT differences
+were below 0.001 and sample counts matched. This check does not verify ingestion,
+propensity fitting, matching, or graph generation from raw JSON with this template.
+The existing artifacts are not included in this repository.
+
+Known implementation limitations
+- step04's extraction of exact-matching topic bands uses unfitted original
+  TF-IDF/SVD objects and falls back to zeros. This does not remove the text
+  representation from the fitted propensity model, but affects topic-band matching.
+- The released DC-BI implementation uses an unweighted arithmetic mean of
+  unsmoothed ratios; the manuscript describes a smoothed weighted geometric mean.
+  No configuration setting resolves that difference.
+
+The scripts in revision/ use existing artifacts and generally do not read this
+YAML file. Their estimator differs from the original step05 estimator. Use the
+named revision scripts for the corresponding revision analyses; results from
+the two estimator implementations need not be identical.

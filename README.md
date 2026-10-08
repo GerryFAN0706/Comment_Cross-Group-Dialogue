@@ -5,7 +5,7 @@
 >
 > *ACM Transactions on Social Computing (TSC), 2026*
 
-This repository provides an **end-to-end, reproducible** research pipeline for the paper above. It evaluates how a single public LLM agent reply (`@CommentR`) reshapes the structure of subsequent human-to-human conversation on Weibo. The additional analyses prepared for the journal revision live in [`revision/`](revision/) (mature-thread rewiring under treatment-affected eligibility, content/topic moderation, and robustness checks).
+This repository provides the research pipeline for the paper above. Configuration status and current reproducibility limitations are documented in [CONFIG_NOTES.txt](CONFIG_NOTES.txt). It evaluates how a single public LLM agent reply (`@CommentR`) reshapes the structure of subsequent human-to-human conversation on Weibo. The additional analyses prepared for the journal revision live in [`revision/`](revision/) (mature-thread rewiring under treatment-affected eligibility, content/topic moderation, and robustness checks).
 
 ---
 
@@ -84,7 +84,7 @@ commentr_research_kit/
 │   └── test_metrics.py          # Unit tests for core metrics
 │
 ├── revision/                    # Additional analyses for the TSC journal revision
-│   ├── revlib.py                #   Shared DR/AIPW estimator (validated vs. artifacts)
+│   ├── revlib.py                #   Shared estimator for revision analyses
 │   ├── a1_sampleB_expanded.py   #   Powered mature-thread rewiring (E_min=1)
 │   ├── a_style.py / a_topic.py  #   Content-moderation & topic heterogeneity
 │   ├── a_bridging.py            #   DC-BI definability & user-attribute bridging
@@ -154,7 +154,7 @@ ln -s /path/to/Comments.json data/comments.json
 
 ## Configuration
 
-All study parameters are centralized in `config.yaml`. Key sections:
+The main pipeline reads [`config.yaml`](config.yaml) from the repository root. The file is a **reconstructed template**, with provisional text-model settings and unavailable language lexicons. Read [CONFIG_NOTES.txt](CONFIG_NOTES.txt) before running it. The scripts in `revision/` generally use existing artifacts rather than this YAML file. Key sections:
 
 | Section | Description |
 |---------|-------------|
@@ -166,7 +166,7 @@ All study parameters are centralized in `config.yaml`. Key sections:
 | `min_pre_human_edges` / `min_post_human_edges` | Sample A/B split thresholds |
 | `control_anchor_strategy` | Pseudo-anchor assignment for controls (`matched_median_latency`) |
 
-Modify parameters only with documented justification. The default values reproduce the paper's results.
+Record any parameter changes. Exact reproduction of every paper result from raw data has not been verified with this template.
 
 ---
 

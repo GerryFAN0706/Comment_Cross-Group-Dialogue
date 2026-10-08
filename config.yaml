@@ -1,0 +1,90 @@
+timezone: Asia/Shanghai
+seed: 2025
+debug_max_threads: 0
+
+agent_ids:
+  - "79f6c7ffc7270a3a7d3136245ab0f8ac"
+agent_nickname_variants:
+  - "a4f2d454af331ea7e8683f9b72eadecb"
+agent_verified_required: true
+
+time_window_minutes: 120
+early_engagement_minutes: 15
+early_max_pre_human_edges: 2
+min_pre_human_edges: 2
+min_post_human_edges: 2
+edge_budget_K: 5
+edge_budget_min_pre: 5
+edge_budget_min_post: 5
+incumbent_edge_min_pre: 1
+incumbent_edge_min_post: 1
+incumbent_include_op: true
+exclude_op_in_reciprocity_main: true
+
+k_controls: 5
+caliper_logit: 0.4
+exact_match_fields:
+  - hour_of_day_band
+  - topic_band
+  - early_engagement_band
+strict_matched_controls_only: true
+control_anchor_strategy: matched_median_latency
+control_anchor_fallback: none
+
+tfidf_max_features: 5000
+svd_components: 50
+
+dr_propensity_clip: 0.01
+dr_n_splits: 5
+dr_bootstrap_B: 200
+dr_bootstrap_seed: 2025
+dr_ridge_alpha: 1.0
+dr_max_weight: 20
+dr_primary_post_outcomes:
+  - post_time_R_with_op
+  - post_time_BF
+  - post_time_Gini
+  - post_time_Assort_province
+  - post_time_DCBI_province
+  - post_time_Stance_Divergence
+  - post_time_Stance_Agonism
+dr_primary_delta_outcomes:
+  - d_time_inc_R_with_op
+  - d_time_inc_BF
+  - d_time_inc_Gini
+  - d_time_inc_Assort_province
+  - d_time_inc_DCBI_province
+  - d_time_inc_Stance_Divergence
+  - d_time_inc_Stance_Agonism
+
+event_bins_minutes: [-60, -30, -10, 0, 10, 30, 60]
+event_edge_bins: [-60, -40, -20, 0, 20, 40, 60]
+event_edge_min_edges: 5
+event_edge_metrics: [DCBI_province, Assort_province, R, BF, Gini]
+
+pressure_window_minutes: 5
+max_thread_percentile_exclude: 99
+
+stance_proxy:
+  enabled: true
+
+empathy_markers: []
+politeness_markers: []
+hedges: []
+prosocial_lexicon:
+  gratitude: []
+  support: []
+  deescalation: []
+  emojis: []
+tone_classifier:
+  enabled: false
+  model_path: artifacts/tone/prosocial_classifier.joblib
+  threshold: 0.5
+  seed: 2025
+  max_positive: 6000
+  max_negative: 6000
+  min_positive: 200
+  vectorizer:
+    analyzer: char
+    ngram_range: [2, 4]
+    min_df: 2
